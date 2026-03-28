@@ -1,0 +1,43 @@
+body {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.container {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+}
+
+.container-tabela {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+}
+table {
+    width: 100%;
+}
+
+table, tr, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.container-cadastro {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: grey;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.botoes {
+    margin-top: 10px;
+}

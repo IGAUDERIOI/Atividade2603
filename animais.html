@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>animaisl</title>
+    <link rel="stylesheet" href="animais.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+        let idanimaisEdit = 0;
+
+        function carregarAnimais() {
+            const tabelaBody = document.getElementById('tabela-body');
+
+            tabelaBody.innerHTML = '<tr><td colspan="3">Buscando dados...</td></tr>';
+
+            axios.get('http://localhost:8080/animais/listar').then(resposta => {
+                if (resposta.status === 200) {
+                    tabelaBody.innerHTML = '';
+
+                    const animaiss = resposta.data;
+
+                    for (const animais of animaiss) {
+                        const linha = document.createElement('tr');
+
+                        linha.innerHTML = `
+                            <td class="acoes">
+                                <button onclick="excluirAnimais(${animais.id})">Excluir</button>
+                            </td>
+                            <td>${animais.id}</td>
+                            <td>${animais.nome}</td>
+                            <td>${animais.raca}</td>
+                            <td>${animais.peso}</td>
+                        `;
+
+                        tabelaBody.appendChild(linha);
+                    }
+                }
+            })
+            .catch(erro => {
+                console.error('Erro na requisição:', erro);
+                tabelaBody.innerHTML = `<tr><td colspan="3">Erro na requisição: ${erro}</td></tr>`;
+            })
+
+        }
+
+        function manutencaoAnimais() {
+            const nome = document.getElementById('input-nome').value;
+            const raca = document.getElementById('input-raca').value;
+            const peso = document.getElementById('input-peso').value;
+
+            if (!nome || !raca || !peso) {
+                return;
+            }
+
+            const dados = {
+                nome,
+                raca,
+                peso
+            };
+
+            axios.post("http://localhost:8080/animais/criar", dados, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(resposta => {
+                if(resposta.status === 201) {
+                    alert("Registro criado com sucesso, ID: " + resposta.data.id);
+                    carregarAnimais();
+                }
+            })
+            .catch(erro => {
+                console.error('Erro na requisição:', erro);
+            })
+        }
+
+        function editarAnimais(id) {
+            idanimaisEdit = id;
+
+            document.getElementById('input-nome').value;
+            document.getElementById('input-raca').value;
+            document.getElementById('input-peso').value;
+        }
+
+        function excluirAnimais(id) {
+            
+            const confirmacao = confirm("Você tem certeza que excluir esse animal?");
+
+            if(confirmacao) {
+                axios.post("http://localhost:8080/animais/deletar/" + id).then(resposta => {
+                    if(resposta.status === 200) {
+                        alert("Registro deletado com sucesso, ID: " + id);
+                        carregarAnimais();
+                    }
+                })
+                .catch(erro => {
+                    console.error('Erro na requisição:', erro);
+                })
+            }
+        }
+    </script>
+</head>
+
+<body onload="carregarAnimais()">
+    <div class="container">
+        <div class="container-cadastro">
+            <div class="campo">
+                <label for="input-nome">Nome:</label>
+                <input type="text" id="input-nome">
+            </div>
+            <div class="campo">
+                <label for="input-raca">Raça:</label>
+                <input type="text" id="input-raca">
+            </div>
+            <div class="campo">
+                <label for="input-peso">Peso:</label>
+                <input type="number" id="input-peso">
+            </div>
+
+            <div class="botoes">
+                <button onclick="manutencaoAnimais()">Salvar</button>
+            </div>
+        </div>
+
+        <div class="container-tabela">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Raca</th>
+                        <th>Peso</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>
