@@ -85,7 +85,7 @@
             const confirmacao = confirm("Você tem certeza que excluir essa pessoa?");
 
             if(confirmacao) {
-                axios.post("http://localhost:8080/pessoas/deletar/" + id).then(resposta => {
+                axios.delete("http://localhost:8080/pessoas/deletar/" + id).then(resposta => {
                     if(resposta.status === 200) {
                         alert("Registro deletado com sucesso, ID: " + id);
                         carregarPessoas();
